@@ -153,14 +153,11 @@ public class memManager_firstFit {
         
         return commaseparatedlist;
     }
-
-    protected Double partition_getPartitionsHeavilyUsedPercentage(){
-        Integer total = 0, highest = 0;
+    protected String partition_getPartitionsHeavilyUsedPercentage(){
 
         HashMap<String,Integer> Histogram = new HashMap<>();
 
         for(memoryBlock m : memoryList){
-            total += m.getUsedCount();
             if(Histogram.containsKey(String.valueOf(m.getUsedCount()))){
                 Integer count = Histogram.get(String.valueOf(m.getUsedCount()));
                 // System.out.println(m.getUsedCount()+"//"+count);
@@ -172,22 +169,50 @@ public class memManager_firstFit {
             // System.out.println("wtf"+Histogram);
         }
         Vector<Integer> keyList = new Vector<Integer>(Histogram.values());
+        ArrayList<memoryBlock> memoryList2 = new ArrayList<memoryBlock>();
 
         for(memoryBlock m : memoryList){
             if(m.getUsedCount() > get3rdQuartile(keyList)){
-                highest += m.getUsedCount();
+                memoryList2.add(m);
             }
         }
 
-        return Double.valueOf(highest)/Double.valueOf(total) * 100d;
+        return String.valueOf(roundDecimals(Double.valueOf(memoryList2.size())/Double.valueOf(memoryList.size()), 5)*100d) 
+            + "% (Condition: greater than "+ get3rdQuartile(keyList)+")";
+
+    }
+
+    protected String old_partition_getPartitionsHeavilyUsedPercentage(){
+
+        HashMap<String,Integer> Histogram = new HashMap<>();
+
+        for(memoryBlock m : memoryList){
+            if(Histogram.containsKey(String.valueOf(m.getUsedCount()))){
+                Integer count = Histogram.get(String.valueOf(m.getUsedCount()));
+                // System.out.println(m.getUsedCount()+"//"+count);
+                Histogram.put(String.valueOf(m.getUsedCount()), count + 1);
+                // System.out.println(Histogram.get(String.valueOf(m.getUsedCount())));
+            } else{
+                Histogram.put(String.valueOf(m.getUsedCount()), 1);
+            }
+            // System.out.println("wtf"+Histogram);
+        }
+        Vector<Integer> keyList = new Vector<Integer>(Histogram.values());
+        ArrayList<memoryBlock> memoryList2 = new ArrayList<memoryBlock>();
+
+        for(memoryBlock m : memoryList){
+            if(m.getUsedCount() > get3rdQuartile(keyList)){
+                memoryList2.add(m);
+            }
+        }
+
+        return String.valueOf(roundDecimals(rm.getHeavilyUsedPercentage(memoryList2), 5));
 
     }
 
     protected Integer get3rdQuartile(Vector<Integer> v){
-        Integer q = v.get((int)Math.floor(v.size()*(3d/4d)) );
-        // System.out.println("bruh" + q + v);
 
-        return q;
+        return (int)Math.floor(v.size()*(3d/4d));
     }
 
     protected Vector<memoryBlock> partition_getSortedMemoryList_byUsageCount(){
@@ -287,6 +312,7 @@ public class memManager_firstFit {
                 if(j.use()){
                     changed = true;
                     im.Throughput += 1;
+                    im.usedMemory.add(m);
                 }
                 if(!(j instanceof nullJob) && j.getTime() <= 0){
                     doneJobs.add(j);
@@ -326,7 +352,7 @@ public class memManager_firstFit {
         System.out.println("\nMetrics:" + 
             "\n\tThroughput: " + im.Throughput +  
             "\n\tUtilization: " + roundDecimals(im.Utilization,2) + 
-                "%\n\t\tUnused Memory: " + im.UnusedMemory +"%" +
+                "%\n\t\tUnused Partitions: " + im.UnusedMemory +"%" +
             "\n\tQueue Length: " + im.QueueLength + 
             "\n\tQueue Waiting Time: " + waitingTime + 
             "\n\tInternal Fragmentation: " + roundDecimals(im.InternalFragmentation, 5) + "%"
@@ -337,8 +363,9 @@ public class memManager_firstFit {
         System.out.println("\n "+ name + " Average Metrics: (Total Time Steps = " + time + ")" + 
             "\n\tThroughput: " + roundDecimals(rm.averageThroughput(),5) +  " Jobs per time step" +
             "\n\tUtilization: " + roundDecimals(rm.averageUtilization(),5) + 
-                "%\n\t\tUnused Memory: " + im.UnusedMemory +"%" + 
-                "\n\t\tHeavily Used: " + roundDecimals(partition_getPartitionsHeavilyUsedPercentage(), 5) + "%" +
+                "%\n\t\tUnused Partitions: " + im.UnusedMemory +"%" + 
+                "\n\t\tHeavily Used Partitions: " + partition_getPartitionsHeavilyUsedPercentage() +
+                "\n\t\t\t(occurences: " + old_partition_getPartitionsHeavilyUsedPercentage() + "% of all timesteps)" +
                 "\n\t\tSorted Usage: [" + partition_getUsedCountList() +"]" +
             "\n\tQueue Length: " + roundDecimals(rm.averageQueueLength(), 5) +  " Jobs" +
             "\n\tQueue Waiting Time: " + roundDecimals(jobs_getAverageWaitingTime(),5) +  " secs" +

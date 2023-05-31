@@ -8,6 +8,6 @@ public class SortByUsageCount implements Comparator<memoryBlock> {
     
     public int compare(memoryBlock a, memoryBlock b)
     {
-        return b.getUsedCount() - a.getUsedCount();
+        return a.getUsedCount() - b.getUsedCount();
     }
 }

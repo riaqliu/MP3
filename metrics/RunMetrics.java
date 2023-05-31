@@ -1,6 +1,9 @@
 package metrics;
 
+import java.util.ArrayList;
 import java.util.Vector;
+
+import structure.memoryBlock;
 
 public class RunMetrics {
     public Vector<InstanceMetrics> Metrics;
@@ -74,5 +77,25 @@ public class RunMetrics {
         Double average = Double.valueOf(sum)/Double.valueOf(Metrics.size());
 
         return average;
+    }
+
+    public double getHeavilyUsedPercentage(ArrayList<memoryBlock> validList){
+        double total = 0d, count = 0d;
+
+
+        for(InstanceMetrics m : Metrics){
+
+            total++;
+            for(memoryBlock m2 : validList){
+                if(m.usedMemory.contains(m2)){
+                    count++;
+                    break;
+                }
+            }
+            // System.out.println(m.usedMemory +" " +String.valueOf(validList) + count + "/" + total);
+        }
+
+
+        return count/total * 100d;
     }
 }
