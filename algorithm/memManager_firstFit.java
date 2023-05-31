@@ -1,6 +1,7 @@
 package algorithm;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import metrics.InstanceMetrics;
 import metrics.RunMetrics;
+import sorters.SortByUsageCount;
 import sorters.SortbyNo;
 import structure.*;
 
@@ -131,6 +133,19 @@ public class memManager_firstFit {
         }
 
         return sum/Double.valueOf(memoryList.size()) * 100d;
+    }
+
+    protected String partition_getUsedCount(){
+        Vector<memoryBlock> sortedMemoryList = new Vector<memoryBlock>(memoryList);
+        Collections.sort(sortedMemoryList, new SortByUsageCount());
+
+        String st = "";
+
+        for(memoryBlock m : sortedMemoryList){
+            st += m + "(" + m.getUsedCount() + "),";
+        }
+
+        return st;
     }
 
     protected Double partition_getInternalFragmentation(){
@@ -263,7 +278,7 @@ public class memManager_firstFit {
         System.out.println("\nMetrics:" + 
             "\n\tThroughput: " + im.Throughput +  
             "\n\tUtilization: " + roundDecimals(im.Utilization,2) + 
-                "%\t(" + im.UnusedMemory +"% Unused memory || )" +
+                "%\t[" + im.UnusedMemory +"% Unused memory ||" + partition_getUsedCount() + "]" +
             "\n\tQueue Length: " + im.QueueLength + 
             "\n\tQueue Waiting Time: " + waitingTime + 
             "\n\tInternal Fragmentation: " + roundDecimals(im.InternalFragmentation, 5) + "%"

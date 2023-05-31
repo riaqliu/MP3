@@ -77,6 +77,10 @@ public class memoryBlock {
         return true;
     }
 
+    public Integer getUsedCount(){
+        return usedCount;
+    }
+
     public boolean isUsed(){
         return (usedCount>0)?true:false;
     }
