@@ -6,7 +6,7 @@ import java.util.*;
 public class memoryBlock {
     protected int blockNumber;
     protected int size;
-    protected boolean used;
+    protected int used;
 
     // private int startAddress;
     protected Vector<job> jobList = new Vector<job>();

@@ -1,5 +1,9 @@
 package metrics;
 
+import java.util.ArrayList;
+
+import structure.memoryBlock;
+
 public class InstanceMetrics {
     public Integer Throughput;
     public Double Utilization;
@@ -7,6 +11,7 @@ public class InstanceMetrics {
     public Double InternalFragmentation;
     public Integer InternalFragmentationValue;
     public Double UnusedMemory;
+    public ArrayList<memoryBlock> usedMemory;
 
     public InstanceMetrics(){
         Throughput = 0;
@@ -15,5 +20,8 @@ public class InstanceMetrics {
         InternalFragmentation = 0d;
         InternalFragmentationValue = 0;
         UnusedMemory = 0d;
+        usedMemory = new ArrayList<memoryBlock>();
     }
+
+
 }
