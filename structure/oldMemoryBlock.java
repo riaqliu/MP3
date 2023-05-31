@@ -24,7 +24,7 @@ public class oldMemoryBlock extends memoryBlock{
                 jobList.add(i, j);
                 jobList.add(jobList.indexOf(address), new nullJob(endpoint, address.getSize()-j.getSize()));
                 jobList.remove(address);
-                this.used++;
+                this.usedCount++;
                 return true;
             }
         }

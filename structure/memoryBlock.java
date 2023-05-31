@@ -6,7 +6,7 @@ import java.util.*;
 public class memoryBlock {
     protected int blockNumber;
     protected int size;
-    protected int used;
+    protected int usedCount;
 
     // private int startAddress;
     protected Vector<job> jobList = new Vector<job>();
@@ -14,7 +14,7 @@ public class memoryBlock {
     public memoryBlock(int blockNumber, int size){
         this.blockNumber = blockNumber;
         this.size = size;
-        this.used = false;
+        this.usedCount = 0;
         nullJob empty = new nullJob();
         empty.setSize(size);
 
@@ -78,7 +78,7 @@ public class memoryBlock {
     }
 
     public boolean isUsed(){
-        return used;
+        return (usedCount>0)?true:false;
     }
 
     public boolean fillJob(job j){
@@ -98,7 +98,7 @@ public class memoryBlock {
                 jobList.add(i, j);
                 jobList.add(jobList.indexOf(address), new nullJob(endpoint, address.getSize()-j.getSize()));
                 jobList.remove(address);
-                this.used = true;
+                this.usedCount++;
                 return true;
 
             }
