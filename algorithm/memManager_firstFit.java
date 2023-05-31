@@ -135,17 +135,23 @@ public class memManager_firstFit {
         return sum/Double.valueOf(memoryList.size()) * 100d;
     }
 
-    protected String partition_getUsedCount(){
+    protected String partition_getUsedCount(int c){
         Vector<memoryBlock> sortedMemoryList = new Vector<memoryBlock>(memoryList);
         Collections.sort(sortedMemoryList, new SortByUsageCount());
 
         String st = "";
+        int i = 0;
 
         for(memoryBlock m : sortedMemoryList){
             st += m + "(" + m.getUsedCount() + "),";
+            i++;
+            if(i >= c)break;
         }
-
         return st;
+    }
+
+    protected String partition_getUsedCount(){
+        return partition_getUsedCount(3);
     }
 
     protected Double partition_getInternalFragmentation(){
@@ -278,7 +284,7 @@ public class memManager_firstFit {
         System.out.println("\nMetrics:" + 
             "\n\tThroughput: " + im.Throughput +  
             "\n\tUtilization: " + roundDecimals(im.Utilization,2) + 
-                "%\t[" + im.UnusedMemory +"% Unused memory ||" + partition_getUsedCount() + "]" +
+                "%\t[" + im.UnusedMemory +"% Unused memory]" +
             "\n\tQueue Length: " + im.QueueLength + 
             "\n\tQueue Waiting Time: " + waitingTime + 
             "\n\tInternal Fragmentation: " + roundDecimals(im.InternalFragmentation, 5) + "%"
