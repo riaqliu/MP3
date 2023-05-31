@@ -144,12 +144,12 @@ public class memManager_firstFit {
         }
         StringBuilder str = new StringBuilder("");
         for (String eachstring : mList){
-            str.append(eachstring).append(",");
+            str.append(eachstring).append(", ");
         }
         String commaseparatedlist = str.toString();
 
         if(commaseparatedlist.length()>0)
-            commaseparatedlist = commaseparatedlist.substring(0, commaseparatedlist.length()-1);
+            commaseparatedlist = commaseparatedlist.substring(0, commaseparatedlist.length()-2);
         
         return commaseparatedlist;
     }
@@ -163,15 +163,18 @@ public class memManager_firstFit {
             total += m.getUsedCount();
             if(Histogram.containsKey(String.valueOf(m.getUsedCount()))){
                 Integer count = Histogram.get(String.valueOf(m.getUsedCount()));
-                Histogram.put(String.valueOf(m.getUsedCount()), count++);
+                // System.out.println(m.getUsedCount()+"//"+count);
+                Histogram.put(String.valueOf(m.getUsedCount()), count + 1);
+                // System.out.println(Histogram.get(String.valueOf(m.getUsedCount())));
             } else{
                 Histogram.put(String.valueOf(m.getUsedCount()), 1);
             }
+            // System.out.println("wtf"+Histogram);
         }
         Vector<Integer> keyList = new Vector<Integer>(Histogram.values());
 
         for(memoryBlock m : memoryList){
-            if(m.getUsedCount() > get1stQuartile(keyList)){
+            if(m.getUsedCount() > get3rdQuartile(keyList)){
                 highest += m.getUsedCount();
             }
         }
@@ -180,8 +183,11 @@ public class memManager_firstFit {
 
     }
 
-    protected double get1stQuartile(Vector<Integer> v){
-        return (double) v.get(v.size()*(1/4));
+    protected Integer get3rdQuartile(Vector<Integer> v){
+        Integer q = v.get((int)Math.floor(v.size()*(3d/4d)) );
+        // System.out.println("bruh" + q + v);
+
+        return q;
     }
 
     protected Vector<memoryBlock> partition_getSortedMemoryList_byUsageCount(){
