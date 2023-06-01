@@ -280,26 +280,47 @@ public class memManager_firstFit {
 
 
     protected boolean fit(){
-        boolean changed = false, possibleFit = false;
-        if(jobList.size() > 0){
-            if(waitingJob == null){
-                waitingJob = jobList.remove(0);
-                changed = true;
-            }
-        }
-        if(waitingJob != null){
-            waitingJob.blocked();
-            for(memoryBlock m : memoryList){
-                if(waitingJob.getSize() <= m.getSize()) possibleFit = true;
-                if(m.fillJob(waitingJob)){
-                    changed = true;
-                    waitingJob = null;
-                    break;
-                }
-            }
+        boolean changed = false;//, possibleFit = false;
+        Vector<job> assignedJobList = new Vector<job>();
 
+        
+        if(jobList.size() > 0){
+            changed = true;
+            for(job waitingJob : jobList){                
+                boolean possibleFit = false;
+                waitingJob.blocked();
+
+                for(memoryBlock m : memoryList){
+                    if(waitingJob.getSize() <= m.getSize())possibleFit = true;
+                    if(m.fillJob(waitingJob)){
+                        assignedJobList.add(waitingJob);
+                        break;
+                    }
+                }
+                if(!possibleFit)assignedJobList.add(waitingJob);
+            }
         }
-        if(!possibleFit) waitingJob = null; // discard job if cannot place it anywhere
+        
+
+        // if(jobList.size() > 0){
+        //     if(waitingJob == null){
+        //         waitingJob = jobList.remove(0);
+        //         changed = true;
+        //     }
+        // }
+        // if(waitingJob != null){
+        //     waitingJob.blocked();
+        //     for(memoryBlock m : memoryList){
+        //         if(waitingJob.getSize() <= m.getSize()) possibleFit = true;
+        //         if(m.fillJob(waitingJob)){
+        //             changed = true;
+        //             waitingJob = null;
+        //             break;
+        //         }
+        //     }
+
+        // }
+        // if(!possibleFit) waitingJob = null; // discard job if cannot place it anywhere
 
         return changed;
     }
