@@ -285,22 +285,30 @@ public class memManager_firstFit {
 
         
         if(jobList.size() > 0){
-            changed = true;
-            for(job waitingJob : jobList){                
+            // System.out.println("hehe" + jobList);
+            for(job waitingJob : jobList){            
                 boolean possibleFit = false;
                 waitingJob.blocked();
 
-                for(memoryBlock m : memoryList){
+                for(memoryBlock m : memoryList){ 
                     if(waitingJob.getSize() <= m.getSize())possibleFit = true;
                     if(m.fillJob(waitingJob)){
                         assignedJobList.add(waitingJob);
+                        changed = true;
+                        // System.out.println("\twtf" + waitingJob);    
+                        // System.out.println("\t\tbruh" + m);   
                         break;
                     }
                 }
                 if(!possibleFit)assignedJobList.add(waitingJob);
             }
         }
+        // System.out.println("what" + assignedJobList);
         
+        for(job asJob : assignedJobList){
+            // System.out.println("remoevd" + asJob);
+            this.jobList.remove(jobList.indexOf(asJob));
+        }
 
         // if(jobList.size() > 0){
         //     if(waitingJob == null){
@@ -321,7 +329,8 @@ public class memManager_firstFit {
 
         // }
         // if(!possibleFit) waitingJob = null; // discard job if cannot place it anywhere
-
+        
+        
         return changed;
     }
 
@@ -350,7 +359,7 @@ public class memManager_firstFit {
     }
     protected void printStorage(){
         System.out.println("\nMemory ("+ time +"s)");
-        System.out.println("[next memory:"+waitingJob+"]");
+        System.out.println("[next memory:"+ jobList +"]");
         Vector<memoryBlock> sortedMemoryList = new Vector<memoryBlock>(memoryList);
         Collections.sort(sortedMemoryList, new SortbyNo());
         for(memoryBlock mb : sortedMemoryList){
