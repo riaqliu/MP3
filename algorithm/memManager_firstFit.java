@@ -62,7 +62,6 @@ public class memManager_firstFit {
 
                 run = false;
                 time += 1;
-                partition_mergeFreeMemory();
                 run = runJobs()? true : run;
                 while(fit());
                 partition_mergeFreeMemory();

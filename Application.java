@@ -13,13 +13,13 @@ public class Application {
         List<job> jList = makeJobs("csvFiles/jobList.csv");
         List<memoryBlock> mList = makeMemoryBlocks("csvFiles/memoryList.csv");
 
-        memManager_firstFit ffManager = new memManager_firstFit(mList, jList);
+        // memManager_firstFit ffManager = new memManager_firstFit(mList, jList);
         // memManager_bestFit bfManager = new memManager_bestFit(mList, jList);
-        // memManager_worstFit wfManager = new memManager_worstFit(mList, jList);
+        memManager_worstFit wfManager = new memManager_worstFit(mList, jList);
 
-        ffManager.thread();
+        // ffManager.thread();
         // bfManager.thread();
-        // wfManager.thread();
+        wfManager.thread();
         
     }
 
